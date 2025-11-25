@@ -11,10 +11,27 @@
       <section class="app-card">
         <div class="view-toggle" id="viewToggle"></div>
 
-        <label class="dropdown-wrapper">
+        <div class="dropdown-wrapper">
           <span class="dropdown-label">Select Date</span>
-          <select id="dateSelect"></select>
-        </label>
+          <div class="date-dropdown" id="dateDropdown">
+            <button
+              id="dateDropdownButton"
+              type="button"
+              class="dropdown-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            >
+              <span id="selectedDateLabel"></span>
+              <span class="chevron" aria-hidden="true"></span>
+            </button>
+            <div
+              id="dateOptions"
+              class="dropdown-options"
+              role="listbox"
+              aria-activedescendant=""
+            ></div>
+          </div>
+        </div>
 
         <div id="strategyList" class="strategy-list"></div>
       </section>

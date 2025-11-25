@@ -161,11 +161,30 @@ const strategyArray = [
 ];
 
 const viewToggle = document.getElementById("viewToggle");
-const dateSelect = document.getElementById("dateSelect");
+const dateDropdown = document.getElementById("dateDropdown");
+const dropdownButton = document.getElementById("dateDropdownButton");
+const selectedDateLabel = document.getElementById("selectedDateLabel");
+const dropdownOptions = document.getElementById("dateOptions");
 const strategyList = document.getElementById("strategyList");
 
 let currentView = "Bullish";
 let currentDate = dateArray[0];
+let isDropdownOpen = false;
+
+const toggleDropdown = (forceState) => {
+  if (typeof forceState === "boolean") {
+    isDropdownOpen = forceState;
+  } else {
+    isDropdownOpen = !isDropdownOpen;
+  }
+
+  dateDropdown.classList.toggle("open", isDropdownOpen);
+  dropdownButton.setAttribute("aria-expanded", String(isDropdownOpen));
+};
+
+const updateSelectedDateLabel = () => {
+  selectedDateLabel.textContent = currentDate;
+};
 
 const renderViewButtons = () => {
   viewToggle.innerHTML = "";
@@ -190,19 +209,30 @@ const renderViewButtons = () => {
 };
 
 const renderDateOptions = () => {
-  dateSelect.innerHTML = "";
-  dateArray.forEach((date, index) => {
-    const option = document.createElement("option");
-    option.value = date;
-    option.textContent = date;
-    if (index === 0) option.selected = true;
-    dateSelect.appendChild(option);
+  dropdownOptions.innerHTML = "";
+
+  dateArray.forEach((date) => {
+    const optionButton = document.createElement("button");
+    optionButton.type = "button";
+    optionButton.textContent = date;
+    optionButton.className = `dropdown-option${
+      date === currentDate ? " active" : ""
+    }`;
+
+    optionButton.addEventListener("click", () => {
+      if (currentDate !== date) {
+        currentDate = date;
+        updateSelectedDateLabel();
+        renderDateOptions();
+        renderStrategies();
+      }
+      toggleDropdown(false);
+    });
+
+    dropdownOptions.appendChild(optionButton);
   });
 
-  dateSelect.addEventListener("change", (event) => {
-    currentDate = event.target.value;
-    renderStrategies();
-  });
+  updateSelectedDateLabel();
 };
 
 const formatStrategyLabel = (count) =>
@@ -251,6 +281,14 @@ const initializeApp = () => {
   renderViewButtons();
   renderDateOptions();
   renderStrategies();
+
+  dropdownButton.addEventListener("click", () => toggleDropdown());
+
+  document.addEventListener("click", (event) => {
+    if (!dateDropdown.contains(event.target)) {
+      toggleDropdown(false);
+    }
+  });
 };
 
 initializeApp();
